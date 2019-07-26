@@ -1,18 +1,44 @@
 export default class Resource {
-  constructor(n) {
+  constructor(n, resPool) {
     this.name = n;
+    this.resPool = resPool;
     this._baseRPT = [{name:this.name,quantity:1}];
+    this._baseROC = [];
     this._quantity = 0;
     this._minimum = 0;
     this._maximum = 100;
     this._isComposite = false;
     this._isStructure = false;
     this._cost = null;
-    this._craftFactor = 1; // # crafted when cost is paid
+  }
+
+  get selfRPT() {
+    let result = 0;
+    this._baseRPT.forEach(r => {
+      if (r.name == this.name) {
+        result = r.quantity;
+      }
+    });
+    return result;
+  }
+  set selfRPT(n) {
+    let exists = false;
+    this._baseRPT.forEach(r => {
+      if (r.name == this.name) {
+        exists = true;
+        r.quantity = n;
+      }
+    });
+    if (!exists) {
+      this._baseRPT.push({name:this.name,quantity:n});
+    }
   }
 
   get baseRPT() { return this._baseRPT; }
   set baseRPT(rpt) { this._baseRPT = rpt; }
+
+  get baseROC() { return this._baseROC; }
+  set baseROC(roc) { this._baseROC = roc; }
 
   get quantity() { return this._quantity; }
   set quantity(q) { this._quantity = q; }
@@ -32,25 +58,21 @@ export default class Resource {
   get cost() { return this._cost; }
   set cost(c) { this._cost = c; }
 
-  get craftFactor() { return this._craftFactor; }
-  set craftFactor(cf) { this._craftFactor = cf; }
-
   tick(n) {
     let rpt = this._baseRPT;
     if (rpt.length === 1 && rpt[0].name === this.name) {
       this.add(rpt[0].quantity * n);
     }
     else {
-      // TODO: for if a Resource generates another type
+      rpt.forEach(r => {
+        // TODO: Currenly only linear growth with quantity. Add other growth.
+        this.resPool.get(r.name).add(r.quantity * n * this._quantity);
+      });
     }
   }
 
   getCraftGain() {
-    return [{name:this.name, quantity:this.craftFactor}];
-  }
-
-  getCraftCost() {
-    return this.cost;
+    return [{name:this.name, quantity:1}];
   }
 
   add(n) {
@@ -64,5 +86,17 @@ export default class Resource {
       return true;
     }
     return false;
+  }
+
+  testCost(n) {
+    if (this.cost == null) { return true; }
+    let result = true;
+    this.cost.forEach(r => {
+      if (!this.resPool.get(r.name).testAddMin(-r.quantity * this.repeat)) {
+        result = false;
+      }
+    });
+
+    return result;
   }
 };

@@ -1,6 +1,6 @@
 export default class Action {
   constructor(t, g, c, n) {
-    this.timetick = t;
+    this.timeTick = t;
     this.gain = g;
     this.actualGain = null; // TODO: For undoing actions accurately
     this.cost = c;

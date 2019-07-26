@@ -1,14 +1,10 @@
 <template>
     <div class="resource">
         <h1>{{ displayName }}</h1>
-        <div v-show="_isComposite">
+        <div v-show="_isComposite || _isStructure">
           <!--<input v-model="craftAmount" type="text" placeholder="Amount to craft">-->
-          <button v-on:click="doCraft" v-bind:disabled="!canCraft">Craft {{ name }}</button>
+          <button v-on:click="doCraft" v-bind:disabled="!canCraft">{{ resActionName }} {{ name }}</button>
         </div>
-        <!--<div v-if="isStructure">
-            <input v-model="improveAmount" type="text" placeholder="Amount to improve">
-            <button v-on:click="doImprove" v-bind:disabled="!canImprove">Upgrade</button>
-        </div>-->
     </div>
 </template>
 
@@ -19,6 +15,10 @@
       name: {
         type: String,
         required: true
+      },
+      resPool: {
+        type: Map,
+        default: null
       },
       _quantity: {
         type: Number,
@@ -36,10 +36,6 @@
         type: Array,
         default: null
       },
-      resPool: {
-        type: Map,
-        default: null
-      }
     },
     data: function(){
       return {
@@ -49,24 +45,16 @@
     },
     computed: {
       displayName: function () {
-        return this.name + ' : ' + this._quantity;
+        return (this._isStructure ? 'S' : (this._isComposite ? 'C' : 'R')) + ' : ' + this.name + ' : ' + this._quantity;
+      },
+      resActionName: function () {
+        if (this._isComposite) { return 'Craft'; }
+        if (this._isStructure) { return 'Buy'; }
+        else { return '???'; }
       },
       canCraft: function () {
-        // TODO: Maybe move this to data classes? Action? If not then Resource?
-        /* // Currently not working?
-        if (!this.isComposite && !this.isStructure) {
-          return false;
-        }
-
-        let costCheck = this.cost;
-        let tempPool = this.resPool;
-        costCheck.forEach(function(r) {
-          if (tempPool.get(r.name).quantity < r.quantity) {
-            return false;
-          }
-        });
-        */
         return true;
+        //return this.resPool.get(this.name).testCost(1);
       },
       /*canImprove: function () {
         return true;
