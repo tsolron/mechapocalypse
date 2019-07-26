@@ -1,9 +1,9 @@
 <template>
-    <div class="rescore">
+    <div class="resource">
         <h1>{{ displayName }}</h1>
-        <div v-if="isComposite">
+        <div v-show="_isComposite">
           <!--<input v-model="craftAmount" type="text" placeholder="Amount to craft">-->
-          <button v-on:click="doCraft" v-bind:disabled="!canCraft">Craft {{ this.name }}</button>
+          <button v-on:click="doCraft" v-bind:disabled="!canCraft">Craft {{ name }}</button>
         </div>
         <!--<div v-if="isStructure">
             <input v-model="improveAmount" type="text" placeholder="Amount to improve">
@@ -14,29 +14,25 @@
 
 <script>
   export default {
-    name: 'rescore',
+    name: 'resource',
     props: {
       name: {
         type: String,
         required: true
       },
-      quantity: {
+      _quantity: {
         type: Number,
         required: true
       },
-      isComposite: {
+      _isComposite: {
         type: Boolean,
         default: false
       },
-      isStructure: {
+      _isStructure: {
         type: Boolean,
         default: false
       },
-      units: {
-        type: String,
-        default: ''
-      },
-      cost: {
+      _cost: {
         type: Array,
         default: null
       },
@@ -44,10 +40,6 @@
         type: Map,
         default: null
       }
-      /*transactional: {
-        type: Boolean,
-        default: false
-      }*/
     },
     data: function(){
       return {
@@ -57,7 +49,7 @@
     },
     computed: {
       displayName: function () {
-        return this.name + ' : ' + this.quantity + ((this.units.length > 0) ? (this.units) : (''));
+        return this.name + ' : ' + this._quantity;
       },
       canCraft: function () {
         // TODO: Maybe move this to data classes? Action? If not then Resource?
