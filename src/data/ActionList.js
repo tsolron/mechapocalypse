@@ -22,9 +22,9 @@ export default class ActionList {
     if (this.past_actions.length == 0) {
       return;
     }
-    this.cur_act = past_actions.pop();
+    this.cur_act = this.past_actions.pop();
     this.cur_act.undo(resPool);
-    this.act_list.unshift(this.cur_act);
+    //this.act_list.unshift(this.cur_act);
   }
 
   addAction(act) {

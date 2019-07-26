@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>Tick Number : {{ this.timeTick }}</h1>
+    <button @click="tryUndo">Undo Last Action</button>
     <hr>
     <ResCore v-for="thisRes in resPoolArr" v-bind="thisRes" v-bind:resPool="resPool" v-on:doCraft="doCraft"></ResCore>
   </div>
@@ -24,7 +25,7 @@ export default {
     /* Resource(name, quantity, isComposite, isStructure, base_resources_per_tick) */
     resList.set('energy', new Resource('energy'));
     resList.set('mass', new Resource('mass'));
-    resList.get('mass').cost = [{name:'energy',quantity:1000}];
+    resList.get('mass').cost = [{name:'energy',quantity:10}];
     resList.get('mass').craftFactor = 10;
     resList.get('mass').isComposite = true;
     resList.get('mass').baseRPT = [{name:'mass',quantity:0}];
@@ -33,7 +34,7 @@ export default {
       resPool: resList,
       action_list: alTemp,
       timeTick: 0,
-      tickspersecond: 5,
+      tickspersecond: 20,
     }
   },
   methods: {
@@ -47,7 +48,10 @@ export default {
         thisRes.tick(1);
       });
       this.action_list.runNextAction(this.resPool);
-    }
+    },
+    tryUndo: function() {
+      this.action_list.rollbackPreviousAction(this.resPool);
+    },
   },
   computed: {
     resPoolArr: function() {

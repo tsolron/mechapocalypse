@@ -3,6 +3,8 @@ export default class Resource {
     this.name = n;
     this._baseRPT = [{name:this.name,quantity:1}];
     this._quantity = 0;
+    this._minimum = 0;
+    this._maximum = 100;
     this._isComposite = false;
     this._isStructure = false;
     this._cost = null;
@@ -14,6 +16,12 @@ export default class Resource {
 
   get quantity() { return this._quantity; }
   set quantity(q) { this._quantity = q; }
+
+  get minimum() { return this._minimum; }
+  set minimum(q) { this._minimum = q; }
+
+  get maximum() { return this._maximum; }
+  set maximum(q) { this._maximum = q; }
 
   get isComposite() { return this._isComposite; }
   set isComposite(ic) { this._isComposite = ic; }
@@ -30,7 +38,7 @@ export default class Resource {
   tick(n) {
     let rpt = this._baseRPT;
     if (rpt.length === 1 && rpt[0].name === this.name) {
-      this._quantity += (rpt[0].quantity * n);
+      this.add(rpt[0].quantity * n);
     }
     else {
       // TODO: for if a Resource generates another type
@@ -47,5 +55,14 @@ export default class Resource {
 
   add(n) {
     this._quantity += n;
+    this._quantity = Math.min(this._quantity,this._maximum);
+    this._quantity = Math.max(this._quantity,this._minimum);
+  }
+
+  testAddMin(n) {
+    if (this._quantity + n >= this._minimum) {
+      return true;
+    }
+    return false;
   }
 };
