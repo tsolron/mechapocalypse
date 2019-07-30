@@ -84,11 +84,12 @@ export default {
       paused: false,
       slowTick: 0,
       lastAutoRecalc: 0,
+      sellRate: 0.5, // TODO: for "undo" / "sell" of resources
     }
   },
   methods: {
     doCraft: function(res_name, n) {
-      let act = new Action(this.timeTick, this.resPool.get(res_name).getCraftGain(), this.resPool.get(res_name).cost, n);
+      let act = new Action(this.timeTick, OPTION);
       this.actionList.addAction(act);
     },
     gameLoop: function() {

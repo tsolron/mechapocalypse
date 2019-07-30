@@ -1,9 +1,8 @@
 export default class Action {
-  constructor(t, g, c, n) {
+  constructor(t, o) {
     this.timeTick = t;
-    this.gain = g;
+    this.option = o;
     this.actualGain = null; // TODO: For undoing actions accurately
-    this.cost = c;
     // TODO: Hard coded for now
     this.repeat = 1;
     this.state = 'new';

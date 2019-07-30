@@ -2,14 +2,13 @@ export default class Resource {
   constructor(n, resPool) {
     this.name = n;
     this.resPool = resPool;
-    this._baseRPT = [{name:this.name,quantity:1}];
-    this._baseROC = [];
+    this._passive = null;
+    this._active = null;
     this._quantity = 0;
     this._minimum = 0;
     this._maximum = 100;
     this._isComposite = false;
     this._isStructure = false;
-    this._cost = null;
   }
 
   get selfRPT() {
@@ -71,10 +70,6 @@ export default class Resource {
     }
   }
 
-  getCraftGain() {
-    return [{name:this.name, quantity:1}];
-  }
-
   add(n) {
     this._quantity += n;
     this._quantity = Math.min(this._quantity,this._maximum);
@@ -99,4 +94,22 @@ export default class Resource {
 
     return result;
   }
-};
+}
+
+/*export function ResourceFactory(resPool, args)
+{
+  let op = new Option();
+  if (typeof args['type'] !== "undefined") {
+    if (args['type'] == '1resperclick') {
+      op.funGain = [{name:'mass',quantity:'1'}]
+    }
+  } else if (typeof args['gain'] !== "undefined" ||
+             typeof args['cost'] !== "undefined" ||
+             typeof args['req'] !== "undefined") {
+    op.funGain = args['gain'];
+    op.funCost = args['cost'];
+    op.funReq = args['req'];
+    op.recalculate(resPool);
+  }
+  return op;
+};*/
